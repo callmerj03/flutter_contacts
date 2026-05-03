@@ -428,15 +428,45 @@ public class SwiftFlutterContactsPlugin: NSObject, FlutterPlugin, FlutterStreamH
             name: "github.com/QuisApp/flutter_contacts",
             binaryMessenger: registrar.messenger()
         )
+
         let eventChannel = FlutterEventChannel(
             name: "github.com/QuisApp/flutter_contacts/events",
             binaryMessenger: registrar.messenger()
         )
-        let rootViewController = UIApplication.shared.delegate!.window!!.rootViewController!
+
+        guard let rootViewController = UIApplication.shared
+            .connectedScenes
+            .compactMap { ($0 as? UIWindowScene)?.windows.first(where: { $0.isKeyWindow }) }
+            .first?
+            .rootViewController else {
+            print("❌ rootViewController not found")
+            return
+        }
+
         let instance = SwiftFlutterContactsPlugin(rootViewController)
         registrar.addMethodCallDelegate(instance, channel: channel)
         eventChannel.setStreamHandler(instance)
     }
+
+//     public static func register(with registrar: FlutterPluginRegistrar) {
+//         let channel = FlutterMethodChannel(
+//             name: "github.com/QuisApp/flutter_contacts",
+//             binaryMessenger: registrar.messenger()
+//         )
+//         let eventChannel = FlutterEventChannel(
+//             name: "github.com/QuisApp/flutter_contacts/events",
+//             binaryMessenger: registrar.messenger()
+//         )
+// //         let rootViewController = UIApplication.shared.delegate!.window!!.rootViewController!
+//         let rootViewController = UIApplication.shared
+//             .connectedScenes
+//             .compactMap { ($0 as? UIWindowScene)?.windows.first(where: { $0.isKeyWindow }) }
+//             .first?
+//             .rootViewController
+//         let instance = SwiftFlutterContactsPlugin(rootViewController)
+//         registrar.addMethodCallDelegate(instance, channel: channel)
+//         eventChannel.setStreamHandler(instance)
+//     }
 
     init(_ rootViewController: UIViewController) {
         self.rootViewController = rootViewController
